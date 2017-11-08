@@ -10,21 +10,22 @@ function makeApp() {
     app.use(bodyParser.json());
 
     app.get('/user', function(req, res) {
-        res.status(200).json({ name: 'tobi' });
+        res.json({ name: 'tobi' });
+        res.status(200);
     });
 
     return app;
 }
 
 test('test1', async t => {
-    t.plan(1);
+    t.plan(2);
 
     const res = await request(makeApp())
         .get('/user')
         .send({email: 'ava@rocks.com', password: '123123'});
 
     t.is(res.status, 200);
-   // t.is(res.json, 'tobi');
+    t.is(res.text, JSON.stringify({ name: 'tobi' }));
 });
 
 
