@@ -3,6 +3,7 @@ import express from 'express';
 
 var request = require('supertest');
 var bodyParser = require('body-parser');
+var UserController = require('../controller/user.controller');
 
 
 function makeApp() {
@@ -13,6 +14,10 @@ function makeApp() {
         res.json({ name: 'tobi' });
         res.status(200);
     });
+
+    /*
+    app.get('/user',UserController.getAllUser);
+    */
 
     return app;
 }

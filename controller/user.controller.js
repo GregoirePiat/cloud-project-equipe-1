@@ -1,7 +1,7 @@
 let UserController =  {
 
     /* GET all user  */
-    getUser: function(req, res, next) {
+    getAllUser: function(req, res, next) {
         res.json({message:"Get a list of users"});
     },
 

@@ -9,7 +9,7 @@ let UserController = require('../controller/user.controller');
  * GET
  */
 /* GET users listing. */
-router.get('/',UserController.getUser);
+router.get('/',UserController.getAllUser);
 
 /* GET one user by id. */
 router.get('/:id',UserController.getUserByID);
