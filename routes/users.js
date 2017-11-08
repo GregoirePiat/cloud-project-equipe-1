@@ -6,7 +6,7 @@ var router = express.Router();
  */
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.json('{"message":"Get a list of users"}');
+    res.json('{"message":"Get a list of users"}');
 });
 
 /* GET one user by id. */
