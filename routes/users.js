@@ -1,59 +1,43 @@
-var express = require('express');
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
+let UserController = require('../controller/user.controller');
+
+
+
 
 /**
  * GET
  */
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-    res.json({message:"Get a list of users"});
-});
+router.get('/',UserController.getUser);
 
 /* GET one user by id. */
-router.get('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"This is user " + userId});
-});
-
+router.get('/:id',UserController.getUserByID);
 
 /**
  * POST
  */
 /* POST - Create new user */
-router.post('/', function(req, res, next) {
-    res.json({message:"Adding a new user"}, 201);
-});
+router.post('/',UserController.createUser);
 
 /**
  * PUT
  */
 /* PUT - Update all user */
-router.put('/', function(req, res, next) {
-    res.json({message:"Update a list of users"}, 201);
-});
+router.put('/', UserController.updateAllUser);
 
 /* PUT - Update one user by id */
-router.put('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"Update user " + userId.text()}, 201);
-});
-
+router.put('/:id',UserController.updateUserByID);
 
 /**
  * DELETE
  */
 /* DELETE - Update all user */
-router.delete('/', function(req, res, next) {
-    res.json({message:"Delete a list of users"});
-});
+router.delete('/',UserController.deleteAllUser);
+
 
 /* DELETE - Delete one user by id */
-router.delete('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"Delete user " + userId.text()});
-});
-
-
+router.delete('/:id', UserController.deleteUserByID);
 
 
 module.exports = router;
