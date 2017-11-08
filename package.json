@@ -7,6 +7,7 @@
     "test": "ava"
   },
   "dependencies": {
+    "ava-files": "^1.0.0",
     "body-parser": "~1.18.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
@@ -14,9 +15,17 @@
     "mongoose": "^4.13.0",
     "morgan": "~1.9.0",
     "serve-favicon": "~2.4.5",
+    "tap": "^10.7.3",
+    "tap-nyan": "^1.1.0",
     "twig": "~0.10.3"
   },
   "devDependencies": {
     "ava": "^0.23.0"
+  },
+  "ava": {
+    "files": [
+      "tests/*.spec.js"
+    ],
+    "tap": true
   }
 }
