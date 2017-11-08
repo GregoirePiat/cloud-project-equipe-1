@@ -20,7 +20,8 @@
     "twig": "~0.10.3"
   },
   "devDependencies": {
-    "ava": "^0.23.0"
+    "ava": "^0.23.0",
+    "supertest": "^3.0.0"
   },
   "ava": {
     "files": [
