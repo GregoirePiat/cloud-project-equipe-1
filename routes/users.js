@@ -19,9 +19,9 @@ router.get('/:id', function(req, res, next) {
 /**
  * POST
  */
-/* PUT - Update all user */
+/* POST - Create new user */
 router.post('/', function(req, res, next) {
-    res.json({message:"Adding a new user"});
+    res.json({message:"Adding a new user"}, 201);
 });
 
 /**
