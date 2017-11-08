@@ -10,9 +10,9 @@ router.get('/', function(req, res, next) {
 });
 
 /* GET one user by id. */
-router.get('/', function(req, res, next) {
-    var userId = req.param('id');
-    res.json({message:"This is user ' + userId.text() +  '"});
+router.get('/:id', function(req, res, next) {
+    var userId = req.params.id;
+    res.json({message:"This is user " + userId});
 });
 
 
@@ -33,9 +33,9 @@ router.put('/', function(req, res, next) {
 });
 
 /* PUT - Update one user by id */
-router.put('/', function(req, res, next) {
-    var userId = req.param('id');
-    res.json({message:"Update user ' + userId.text() +  '"});
+router.put('/:id', function(req, res, next) {
+    var userId = req.params.id;
+    res.json({message:"Update user " + userId.text()});
 });
 
 
@@ -48,9 +48,9 @@ router.delete('/', function(req, res, next) {
 });
 
 /* DELETE - Delete one user by id */
-router.delete('/', function(req, res, next) {
-    var userId = req.param('id');
-    res.json({message:"Delete user ' + userId.text() +  '"});
+router.delete('/:id', function(req, res, next) {
+    var userId = req.params.id;
+    res.json({message:"Delete user " + userId.text()});
 });
 
 
