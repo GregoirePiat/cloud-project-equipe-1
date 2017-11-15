@@ -3,15 +3,17 @@ let UserController =  {
 
     /* GET all user  */
     getAllUser: function(req, res, next) {
-        var Users = User.find();
-        res.json(Users);
+        User.find({}, function(err, users) {
+            res.json(users);
+        });
     },
 
     /* GET one user by id. */
     getUserByID: function(req, res, next) {
         var userId = req.params.id;
-        var User = User.findOne({'id': userId});
-        res.json({message:"This is user " + userId});
+        var User = User.findOne({'id': userId}, function(err, user) {
+            res.json(user);
+        });
     },
 
     /* POST - Create new user */
