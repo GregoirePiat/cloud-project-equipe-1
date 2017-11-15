@@ -5,13 +5,14 @@ let UserController =  {
 
     /* GET all user  */
     getAllUser: function(req, res, next) {
-
-        res.json({message:"Get a list of users"});
+        var Users = User.find();
+        res.json(Users);
     },
 
     /* GET one user by id. */
     getUserByID: function(req, res, next) {
         var userId = req.params.id;
+        var User = User.findOne({'id': userId});
         res.json({message:"This is user " + userId});
     },
 
