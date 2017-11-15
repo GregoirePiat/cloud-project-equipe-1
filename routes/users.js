@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+let UserController = require('../controller/user.controller');
 
 /**
  * GET
@@ -44,16 +45,12 @@ router.put('/:id', function(req, res, next) {
  */
 /* DELETE - Update all user */
 router.delete('/', function(req, res, next) {
-    res.json({message:"Delete a list of users"});
+    UserController.deleteAllUser(req,res,next);
 });
 
 /* DELETE - Delete one user by id */
 router.delete('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"Delete user " + userId.text()});
+    UserController.deleteUserByID(req,res,next);
 });
-
-
-
 
 module.exports = router;
