@@ -1,8 +1,7 @@
 {
 	"info": {
-		"name": "Projet API cloud",
-		"_postman_id": "28dbc1d9-bbac-e4dc-f116-53f7054c9982",
-		"description": "",
+		"name": "Projet API cloud copy",
+		"_postman_id": "a8075a6a-a171-8103-1e0b-d8a92f53ace0",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -11,7 +10,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
 					"protocol": "{{protocol}}",
@@ -22,8 +24,7 @@
 					"path": [
 						"user"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -32,7 +33,10 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
 					"protocol": "{{protocol}}",
@@ -43,8 +47,7 @@
 					"path": [
 						"user"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -53,7 +56,10 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
 					"protocol": "{{protocol}}",
@@ -64,8 +70,7 @@
 					"path": [
 						"user"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -74,7 +79,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/1",
 					"protocol": "{{protocol}}",
@@ -86,8 +94,7 @@
 						"user",
 						"1"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -96,7 +103,10 @@
 			"request": {
 				"method": "POST",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
 					"protocol": "{{protocol}}",
@@ -107,8 +117,7 @@
 					"path": [
 						"user"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -116,10 +125,18 @@
 			"name": "Update one user",
 			"request": {
 				"method": "PUT",
-				"header": [],
-				"body": {},
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"charley2\",\n    \"lastName\": \"kuin2\",\n    \"id\": \"5a0c34274ad54d2990359a5b\",\n    \"birthDay\": \"10/12/1949\",\n    \"position\": {\n        \"lat\": 32.234711,\n        \"lon\": -51.304815\n    }\n}"
+				},
 				"url": {
-					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/1",
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/5a0c34274ad54d2990359a5b",
 					"protocol": "{{protocol}}",
 					"host": [
 						"{{server-address}}"
@@ -127,10 +144,9 @@
 					"port": "{{port}}",
 					"path": [
 						"user",
-						"1"
+						"5a0c34274ad54d2990359a5b"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		},
@@ -139,7 +155,10 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/1",
 					"protocol": "{{protocol}}",
@@ -151,8 +170,7 @@
 						"user",
 						"1"
 					]
-				},
-				"description": ""
+				}
 			},
 			"response": []
 		}
