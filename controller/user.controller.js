@@ -1,7 +1,11 @@
+let UserSchema = require('../model/user');
+var User = mongoose.model('User', UserSchema);
+
 let UserController =  {
 
     /* GET all user  */
     getAllUser: function(req, res, next) {
+
         res.json({message:"Get a list of users"});
     },
 
