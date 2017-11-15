@@ -115,7 +115,24 @@ test('updateUserByID', async t => {
 });
 
 test('deleteAllUser', async t => {
-    t.pass(1);
+    t.plan(3);
+
+    // select all users and count how many there are
+    const resAllBefore = await request(makeApp())
+        .get('/');
+
+    let nbUsers = resAllBefore.text.length;
+
+    // delete all users
+    const resDel = await request(makeApp())
+        .delete('/');
+    t.is(resDel.status, 200);
+
+    // is everything effectively deleted ?
+    const resAllAfter = await request(makeApp())
+        .get('/');
+    t.is(resAllAfter.status, 200);
+    t.is(resAllAfter.text, JSON.stringify('{}')); // should be empty
 });
 
 test('deleteUserByID', async t => {
