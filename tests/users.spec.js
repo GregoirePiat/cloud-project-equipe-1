@@ -45,7 +45,6 @@ test('getAllUsers', async t => {
     t.is(res.text, JSON.stringify(initialData));
 });
 
-
 test('getUserByID', async t => {
     t.plan(2);
 
@@ -107,3 +106,34 @@ test('createUser', async t => {
     t.is(resById.text, JSON.stringify(addedUser));
 });
 
+test('updateAllUser', async t => {
+    t.pass(1);
+});
+
+test('updateUserByID', async t => {
+    t.pass(1);
+});
+
+test('deleteAllUser', async t => {
+    t.pass(1);
+});
+
+test('deleteUserByID', async t => {
+    t.plan(3);
+
+    // select all users
+    const resAllBefore = await request(makeApp())
+        .get('/');
+
+    // delete the first user
+    let userToDel = resAllBefore.text[0];
+
+    const resDel = await request(makeApp())
+        .delete('/' + userToDel.id);
+    t.is(resDel.status, 204);
+
+    // is he effectively deleted ?
+    const resById = await request(makeApp())
+        .get('/' + userToDel.id);
+    t.is(resById.status, 500);
+});
