@@ -121,7 +121,7 @@ let UserController = {
     /* DELETE - Delete one user by id */
     deleteUserByID: function(req, res, next) {
         let userId = req.params.id;
-        user.deleteOne({_id: userId}).remove().exec((err) => {
+        User.remove({_id: userId}, (err) => {
             if (err) {
                 return res.status(500).json(err.message);
             }
