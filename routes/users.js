@@ -7,17 +7,10 @@ let UserController = require('../controller/user.controller');
  * GET
  */
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-    UserController.getAllUser(req, res, next);
-    res.json({message:"Get a list of users"});
-});
+router.get('/', UserController.getAllUser);
 
 /* GET one user by id. */
-router.get('/:id', function(req, res, next) {
-    UserController.getUserByID(req, res, next);
-    var userId = req.params.id;
-    res.json({message:"This is user " + userId});
-});
+router.get('/:id', UserController.getUserByID);
 
 
 /**
