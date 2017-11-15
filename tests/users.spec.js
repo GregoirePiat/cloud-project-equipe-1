@@ -9,7 +9,7 @@ var request = require('supertest');
 var bodyParser = require('body-parser');
 
 
-// Create a app's new instance to avoid problems
+// Create a app's new instance to avoid problems - used in every other test
 function makeApp() {
     var app = express();
     app.use(bodyParser.json());
@@ -19,7 +19,7 @@ function makeApp() {
 
 //TODO : mock all necessary methods
 
-// This runs before all tests - add 5 users to use for tests
+// This test runs before all tests - add 5 users to use for later tests
 test.before(async t => {
     t.plan(initialData.length);
 
@@ -111,7 +111,46 @@ test('updateAllUser', async t => {
 });
 
 test('updateUserByID', async t => {
-    t.pass(1);
+    t.plan(4);
+
+    // add first user from initial data
+    const resAdd = await request(makeApp())
+        .post('/')
+        .send(JSON.stringify(initialData[0]));
+
+    // select all users to get json of addedUser
+    const resAll = await request(makeApp())
+        .get('/');
+
+    var addedUser = null;
+    for (var i = 0; i < resAll.text.length; i++) {
+        if (resAll.text[i].firstName == initialData[0].firstName &&
+            resAll.text[i].lastName == initialData[0].lastName &&
+            resAll.text[i].position == initialData[0].position) {
+            addedUser = resAll.text[i];
+        }
+    }
+
+    // update added user
+    let newUser = addedUser;
+    newUser.lastName = "Nvos";
+    newUser.firstName = "Strelytsia";
+    newUser.position[0] = "Abyssal Plane";
+
+    const resUpdate = await request(makeApp())
+        .put('/' + addedUser.id)
+        .send(JSON.stringify(newUser));
+    t.is(resUpdate.status, 201);
+
+    // select added user - has he been correctly updated ?
+    const resById = await request(makeApp())
+        .get('/' + newUser.id);
+    t.is(resById.status, 200);
+    t.is(resById.text.lastName, "Nvos");
+    t.is(resById.text.firstName, "Strelytsia");
+    t.is(resById.text.position[0], "Abyssal Plane");
+    t.is(resById.text.position[1], JSON.stringify(newUser.position[1]));
+    t.is(resById.text.birthday, JSON.stringify(newUser.birthday));
 });
 
 test('deleteAllUser', async t => {
