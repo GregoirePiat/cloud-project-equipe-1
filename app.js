@@ -1,3 +1,15 @@
+/**
+ * init mongoose
+ */
+let mongoose = require('mongoose');
+mongoose.connect('mongodb://138.68.106.65'); //To change
+//Test connexion
+mongoose.Promise = global.Promise;
+let db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {/* we're connected!*/console.log("we're connected") });
+
 let express = require('express');
 let path = require('path');
 let favicon = require('serve-favicon');
@@ -10,12 +22,6 @@ let users = require('./routes/users');
 
 let app = express();
 
-// // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'twig');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

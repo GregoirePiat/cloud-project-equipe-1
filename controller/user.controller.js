@@ -37,7 +37,6 @@ let UserController =  {
         var userId = req.params.id;
         res.json({message:"Delete user " + userId.text()});
     }
-
-}
+};
 
 module.exports = UserController;
