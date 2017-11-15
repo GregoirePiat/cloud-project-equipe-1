@@ -34,12 +34,7 @@ let UserController = {
     /* GET all user  */
     getAllUser: function(req, res, next) {
         User.find({}, function(err, users) {
-            var usersDto;
-
-            for (var i = 0, len = users.length; i < len; i++) {
-                usersDto.add(users[i]);
-            }
-            res.json(usersDto);
+            res.json(users.map(user => dao2dto(user)));
         });
     },
 
