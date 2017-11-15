@@ -29,12 +29,14 @@ const dao2dto = user => {
 };
 
 
-
 let UserController = {
 
     /* GET all user  */
     getAllUser: function(req, res, next) {
-        User.find({}, function(err, users) {
+        User.find({}, (err, users) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
             res.json(users.map(user => dao2dto(user)));
         });
     },
@@ -43,7 +45,7 @@ let UserController = {
     getUserByID: function(req, res, next) {
         let userId = req.params.id;
         console.log(userId);
-        User.findOne({'_id': userId}, function(err, user) {
+        User.findOne({'_id': userId}, (err, user) => {
             if (err) {
                 console.log(err);
                 return res.status(500).json(err.message);
@@ -71,9 +73,23 @@ let UserController = {
 
     /* PUT - Update all user */
     updateAllUser: function(req, res, next) {
-        res.json({
-            message: 'Update a list of users'
-        }, 201);
+        let users = req.body.map(user => dto2dao(user));
+        User.remove({}, (err) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
+            User.create(users, (err) => {
+                if (err) {
+                    return res.status(500).json(err.message);
+                }
+                User.find({}, (err, usersUpdated) => {
+                    if (err) {
+                        return res.status(500).json(err.message);
+                    }
+                    res.json(usersUpdated.map(user => dao2dto(user)));
+                });
+            });
+        });
     },
 
 
@@ -82,8 +98,7 @@ let UserController = {
         console.log(req.params);
         let user = dto2dao(req.body);
         let userId = req.params.id;
-
-        User.findByIdAndUpdate({ _id: userId }, { $set: user}, function(err, updatedUser) {
+        User.findByIdAndUpdate({_id: user._id}, {$set: user}, function(err, updatedUser) {
             if (err) {
                 console.log(err);
                 return res.status(500).json(err.message);
@@ -95,20 +110,23 @@ let UserController = {
 
     /* DELETE - Update all user */
     deleteAllUser: function(req, res, next) {
-        User.deleteMany();
-        res.json({message: 'Delete a list of users'});
+        User.deleteMany({}, (err) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
+            res.json({message: 'All users deleted'});
+        });
     },
 
     /* DELETE - Delete one user by id */
     deleteUserByID: function(req, res, next) {
         let userId = req.params.id;
-        let user = User.findById(userId);
-        user.deleteOne((err, user) => {
+        user.deleteOne({_id: userId}).remove().exec((err) => {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            res.status(201).json(dao2dto(user));
-        })
+            res.status(201).json({message: 'User deleted'});
+        });
     },
 
     //Add a user
