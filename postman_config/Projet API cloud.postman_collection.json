@@ -1,0 +1,160 @@
+{
+	"info": {
+		"name": "Projet API cloud",
+		"_postman_id": "28dbc1d9-bbac-e4dc-f116-53f7054c9982",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update all users",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete all users",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get one user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/1",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add new user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update one user",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/1",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete one user",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{protocol}}://{{server-address}}:{{port}}/user/1",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{server-address}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"user",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
