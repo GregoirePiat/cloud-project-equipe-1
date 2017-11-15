@@ -30,21 +30,20 @@ const dao2dto = User => {
 
 let UserController = {
 
-  /* GET all user  */
-  getAllUser: function(req, res, next) {
+    /* GET all user  */
+    getAllUser: function(req, res, next) {
+        User.find({}, function(err, users) {
+            res.json(users);
+        });
+    },
 
-    res.json({
-      message: "Get a list of users"
-    });
-  },
-
-  /* GET one user by id. */
-  getUserByID: function(req, res, next) {
-    var userId = req.params.id;
-    res.json({
-      message: "This is user " + userId
-    });
-  },
+    /* GET one user by id. */
+    getUserByID: function(req, res, next) {
+        var userId = req.params.id;
+        var User = User.findOne({'id': userId}, function(err, user) {
+            res.json(user);
+        });
+    },
 
   /* POST - Create new user */
   createUser: function(req, res, next) {
@@ -88,20 +87,25 @@ let UserController = {
     }, 201);
   },
 
-  /* DELETE - Update all user */
-  deleteAllUser: function(req, res, next) {
-    res.json({
-      message: "Delete a list of users"
-    });
-  },
+    /* DELETE - Update all user */
+    deleteAllUser: function(req, res, next) {
+        User.deleteMany();
+        res.json({message:"Delete a list of users"});
+    },
 
-  /* DELETE - Delete one user by id */
-  deleteUserByID: function(req, res, next) {
-    var userId = req.params.id;
-    res.json({
-      message: "Delete user " + userId.text()
-    });
-  }
+    /* DELETE - Delete one user by id */
+    deleteUserByID: function(req, res, next) {
+        let userId = req.params.id;
+        User.deleteOne({id: userId});
+        res.json({message:"Delete user with id: " + userId.text()});
+    },
+
+    //Add a user
+    addUser: function (req,res,next) {
+        let user = new User({firstName: 'Polyetch'});
+        user.save();
+        res.json({message:"Add polytech"});
+    }
 };
 
 module.exports = UserController;

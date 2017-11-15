@@ -5,5 +5,5 @@ let positionSchema = mongoose.Schema({
         lon: {type: String, required: [true, "lon can't be blank"]},
     }
 });
-let Position = mongoose.model('User',positionSchema);
+let Position = mongoose.model('Position',positionSchema);
 module.exports = Position;

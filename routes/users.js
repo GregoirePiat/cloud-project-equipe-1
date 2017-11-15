@@ -1,20 +1,17 @@
 const userController = require('../controller/user.controller');
 var express = require('express');
 var router = express.Router();
+let UserController = require('../controller/user.controller');
+
 
 /**
  * GET
  */
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-    res.json({message:"Get a list of users"});
-});
+router.get('/', UserController.getAllUser);
 
 /* GET one user by id. */
-router.get('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"This is user " + userId});
-});
+router.get('/:id', UserController.getUserByID);
 
 
 /**
@@ -37,22 +34,19 @@ router.put('/:id', function(req, res, next) {
     res.json({message:"Update user " + userId.text()}, 201);
 });
 
-
 /**
  * DELETE
  */
 /* DELETE - Update all user */
-router.delete('/', function(req, res, next) {
-    res.json({message:"Delete a list of users"});
-});
+router.delete('/', UserController.deleteAllUser);
 
 /* DELETE - Delete one user by id */
-router.delete('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"Delete user " + userId.text()});
-});
+router.delete('/:id', UserController.deleteUserByID);
 
-
-
+/**
+ * Add Polytech
+ */
+/* DELETE - Delete one user by id */
+router.put('/add', UserController.addUser);
 
 module.exports = router;
