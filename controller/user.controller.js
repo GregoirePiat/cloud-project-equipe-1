@@ -5,7 +5,7 @@ const dto2dao = user => {
 
   return new User({
     firstName: user.firstName,
-    lastname: user.lastname,
+    lastName: user.lastName,
     birthDay: moment(user.birthDay, 'MM/DD/YYYY'),
     position: {
       type: "Point",
