@@ -34,13 +34,15 @@ let UserController =  {
 
     /* DELETE - Update all user */
     deleteAllUser: function(req, res, next) {
+        User.deleteMany();
         res.json({message:"Delete a list of users"});
     },
 
     /* DELETE - Delete one user by id */
     deleteUserByID: function(req, res, next) {
-        var userId = req.params.id;
-        res.json({message:"Delete user " + userId.text()});
+        let userId = req.params.id;
+        User.deleteOne({id: userId});
+        res.json({message:"Delete user with id: " + userId.text()});
     }
 };
 
