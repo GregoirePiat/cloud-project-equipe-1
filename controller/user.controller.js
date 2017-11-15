@@ -1,7 +1,8 @@
 const moment = require('moment');
-let UserSchema = require('../model/user');
+let User = require('../model/user');
 
 const dto2dao = user => {
+
   return new User({
     firstName: user.firstName,
     lastname: user.lastname,
@@ -50,7 +51,7 @@ let UserController = {
     const user = dto2dao(req.body);
     user.save((err, user) => {
       if (err) {
-        return res.status(500).json(err);
+        return res.status(500).json(err.message);
 
       }
       res.status(201).json(dao2dto(user));
