@@ -4,6 +4,7 @@ let User = require('../model/user');
 const dto2dao = user => {
 
     return new User({
+        _id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         birthDay: moment(user.birthDay, 'MM/DD/YYYY'),
@@ -14,18 +15,19 @@ const dto2dao = user => {
     });
 };
 
-const dao2dto = User => {
+const dao2dto = user => {
     return ({
-        firstName: User.firstName,
-        lastName: User.lastName,
-        id: User._id,
-        birthDay: moment(User.birthDay).format('L'),
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        birthDay: moment(user.birthDay).format('L'),
         position: {
-            lat: User.position.coordinates[1],
-            lon: User.position.coordinates[0],
+            lat: user.position.coordinates[1],
+            lon: user.position.coordinates[0],
         }
     });
-}
+};
+
 
 
 let UserController = {
@@ -44,8 +46,7 @@ let UserController = {
         User.findOne({'_id': userId}, function(err, user) {
             if (err) {
                 console.log(err);
-                res.status(500);
-                res.json({error: 'something went wrong with the database'})
+                return res.status(500).json(err.message);
             }
             if (user) {
                 res.json(dao2dto(user));
@@ -62,7 +63,6 @@ let UserController = {
         user.save((err, user) => {
             if (err) {
                 return res.status(500).json(err.message);
-
             }
             res.status(201).json(dao2dto(user));
         });
@@ -70,7 +70,7 @@ let UserController = {
 
 
     /* PUT - Update all user */
-    AllUser: function(req, res, next) {
+    updateAllUser: function(req, res, next) {
         res.json({
             message: 'Update a list of users'
         }, 201);
@@ -79,23 +79,18 @@ let UserController = {
 
     /* PUT - Update one user by id */
     updateUserByID: function(req, res, next) {
-        var userId = req.params.id;
-        var newFirstname = req.params.firstname;
-        var newLastName = req.params.lastname;
-        var newPosition = req.params.position;
-        var user = User.findById(userId);
-        user.set({
-            firstname: newFirstname,
-            lastname: newLastName,
-            position: newPosition
+        console.log(req.params);
+        let user = dto2dao(req.body);
+        let userId = req.params.id;
+
+        User.findByIdAndUpdate({ _id: userId }, { $set: user}, function(err, updatedUser) {
+            if (err) {
+                console.log(err);
+                return res.status(500).json(err.message);
+            }
+            res.status(201);
+            res.send(dao2dto(updatedUser));
         });
-        user.save(function(err, updatedUser) {
-            if (err) return handleError(err);
-            res.send(updatedUser);
-        });
-        res.json({
-            message: 'Update user ' + userId.text()
-        }, 201);
     },
 
     /* DELETE - Update all user */

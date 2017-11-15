@@ -24,15 +24,10 @@ router.post('/', userController.createUser);
  * PUT
  */
 /* PUT - Update all user */
-router.put('/', function(req, res, next) {
-    res.json({message:"Update a list of users"}, 201);
-});
+router.put('/', UserController.updateAllUser);
 
 /* PUT - Update one user by id */
-router.put('/:id', function(req, res, next) {
-    var userId = req.params.id;
-    res.json({message:"Update user " + userId.text()}, 201);
-});
+router.put('/:id', UserController.updateUserByID);
 
 /**
  * DELETE
