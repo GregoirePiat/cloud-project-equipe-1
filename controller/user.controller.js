@@ -73,12 +73,12 @@ let UserController = {
     var newFirstname = req.params.firstname;
     var newLastName = req.params.lastname;
     var newPosition = req.params.position;
-    var user = User.findById(userId)
+    var user = User.findById(userId);
     user.set({
       firstname: newFirstname,
       lastname: newLastName,
       position: newPosition
-    })
+    });
     user.save(function(err, updatedUser) {
       if (err) return handleError(err);
       res.send(updatedUser);
@@ -97,8 +97,13 @@ let UserController = {
     /* DELETE - Delete one user by id */
     deleteUserByID: function(req, res, next) {
         let userId = req.params.id;
-        User.deleteOne({id: userId});
-        res.json({message:"Delete user with id: " + userId.text()});
+        let user = User.findById(userId);
+        user.deleteOne((err, user) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
+            res.status(201).json(dao2dto(user));
+        })
     },
 
     //Add a user

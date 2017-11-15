@@ -2,19 +2,13 @@ let mongoose = require('mongoose');
 
 
 let userSchema = mongoose.Schema({
-    firstName: {
-        type: String
-    },
-    lastName: {
-        type: String
-    },
+    firstName: {type: String },
+    lastName: {type: String},
+    birthDay: Date,
     position: {
-        type: {
-            type: String
-        },
+        type: {type: String},
         coordinates: [Number],
     },
-    birthDay: Date
 });
 
 userSchema.index({"position": '2dsphere'});
