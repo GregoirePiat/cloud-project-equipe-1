@@ -35,18 +35,19 @@ router.put('/:id', function(req, res, next) {
     res.json({message:"Update user " + userId.text()}, 201);
 });
 
-
 /**
  * DELETE
  */
 /* DELETE - Update all user */
-router.delete('/', function(req, res, next) {
-    UserController.deleteAllUser(req,res,next);
-});
+router.delete('/', UserController.deleteAllUser);
 
 /* DELETE - Delete one user by id */
-router.delete('/:id', function(req, res, next) {
-    UserController.deleteUserByID(req,res,next);
-});
+router.delete('/:id', UserController.deleteUserByID);
+
+/**
+ * Add Polytech
+ */
+/* DELETE - Delete one user by id */
+router.put('/add', UserController.addUser);
 
 module.exports = router;
