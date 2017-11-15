@@ -100,7 +100,6 @@ let UserController = {
         let userId = req.params.id;
         User.findByIdAndUpdate({_id: user._id}, {$set: user}, function(err, updatedUser) {
             if (err) {
-                console.log(err);
                 return res.status(500).json(err.message);
             }
             res.status(201);
@@ -114,7 +113,7 @@ let UserController = {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            res.json({message: 'All users deleted'});
+            res.status(204).json({message: 'All users deleted'});
         });
     },
 
@@ -125,7 +124,7 @@ let UserController = {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            res.status(201).json({message: 'User deleted'});
+            res.status(204).json({message: 'User deleted'});
         });
     },
 
