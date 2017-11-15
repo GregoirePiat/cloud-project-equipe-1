@@ -1,12 +1,10 @@
-let UserSchema = require('../model/user');
-var User = mongoose.model('User', UserSchema);
-
 let UserController =  {
 
     /* GET all user  */
     getAllUser: function(req, res, next) {
-        var Users = User.find();
-        res.json(Users);
+        User.find({}, function(err, users) {
+            res.json(users);
+        });
     },
 
     /* GET one user by id. */
