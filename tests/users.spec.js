@@ -93,6 +93,8 @@ test('createUser', async t => {
 });
 
 test('updateAllUser', async t => {
+    t.pass(3);
+
     // update some users
     let usersUpdated = initialData;
     usersUpdated[0].lastName = "Nvos";
