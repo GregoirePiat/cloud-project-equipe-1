@@ -1,6 +1,4 @@
-let UserSchema = require('../model/user');
-var User = mongoose.model('User', UserSchema);
-
+let User = require('../model/user');
 let UserController =  {
 
     /* GET all user  */
@@ -43,6 +41,13 @@ let UserController =  {
         let userId = req.params.id;
         User.deleteOne({id: userId});
         res.json({message:"Delete user with id: " + userId.text()});
+    },
+
+    //Add a user
+    addUser: function (req,res,next) {
+        let user = new User({firstName: 'Polyetch'});
+        user.save();
+        res.json({message:"Add polytech"});
     }
 };
 
