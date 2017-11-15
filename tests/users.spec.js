@@ -17,12 +17,8 @@ function makeApp() {
     return app;
 }
 
-//TODO : mock all necessary methods
-
 // This test runs before all tests - add 5 users to use for later tests
 test.before(async t => {
-    t.plan(initialData.length);
-
     for (var i=0; i < initialData.length; i++) {
         const res = await request(makeApp())
             .post('/')
@@ -31,13 +27,10 @@ test.before(async t => {
         t.is(res.text, i);
         initialDataId[i] = res.text;
     }
-
     t.pass();
 });
 
 test('getAllUsers', async t => {
-    t.plan(1);
-
     const res = await request(makeApp())
         .get('/');
 
@@ -46,8 +39,6 @@ test('getAllUsers', async t => {
 });
 
 test('getUserByID', async t => {
-    t.plan(2);
-
     var midTabIndex = Math.floor(initialData.length / 2);
     console.log(initialData[midTabIndex]);
     console.log(initialDataId[midTabIndex]);
@@ -75,17 +66,12 @@ test('getUserByID', async t => {
 });
 
 test('createUser', async t => {
-    t.plan(3);
-
     // add first user from initial data
     const resAdd = await request(makeApp())
         .post('/')
         .send(JSON.stringify(initialData[0]));
-
     t.is(resAdd.status, 201);
-
     // user was added correctly ?
-
     //get all users to get id of added user
     const resAll = await request(makeApp())
         .get('/');
@@ -107,12 +93,37 @@ test('createUser', async t => {
 });
 
 test('updateAllUser', async t => {
-    t.pass(1);
+    // update some users
+    let usersUpdated = initialData;
+    usersUpdated[0].lastName = "Nvos";
+    usersUpdated[0].firstName = "Strelytsia";
+    usersUpdated[0].position[0] = "Abyssal Plane";
+
+    usersUpdated[1].lastName = "yolob";
+    usersUpdated[1].firstName = "Agory";
+    usersUpdated[1].position[0] = "Faery realm";
+
+    const resUpdate = await request(makeApp())
+        .put('/')
+        .send(JSON.stringify(usersUpdated));
+
+    t.is(resUpdate.status, 201);
+
+    // get all users anew
+    const resAllUsers = await request(makeApp())
+        .get('/');
+
+    // test if old users were updated
+    t.is(resAllUsers.text[0].lastName, "Nvos");
+    t.is(resAllUsers.text[0].firstName, "Strelytsia");
+    t.is(resAllUsers.text[0].position[0], "Abyssal Plane");
+
+    t.is(resAllUsers.text[0].lastName, "yolob");
+    t.is(resAllUsers.text[1].firstName, "Agory");
+    t.is(resAllUsers.text[1].position[0], "Faery realm");
 });
 
 test('updateUserByID', async t => {
-    t.plan(4);
-
     // add first user from initial data
     const resAdd = await request(makeApp())
         .post('/')
@@ -154,8 +165,6 @@ test('updateUserByID', async t => {
 });
 
 test('deleteAllUser', async t => {
-    t.plan(3);
-
     // select all users and count how many there are
     const resAllBefore = await request(makeApp())
         .get('/');
@@ -175,8 +184,6 @@ test('deleteAllUser', async t => {
 });
 
 test('deleteUserByID', async t => {
-    t.plan(3);
-
     // select all users
     const resAllBefore = await request(makeApp())
         .get('/');
