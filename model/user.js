@@ -1,10 +1,26 @@
 let mongoose = require('mongoose');
-let Position = require('position');
+
+
 let userSchema = mongoose.Schema({
-    id: {type: String},
-    firstName: {type: String, required: [true, "firstname can't be blank"]},
-    lastName: {type: String, required: [true, "lastname can't be blank"]},
-    position: {type: Position}
+  firstName: {
+    type: String,
+    required: [true, "firstname can't be blank"]
+  },
+  lastName: {
+    type: String,
+    required: [true, "lastname can't be blank"]
+  },
+  position: {
+    type: {
+      type: String
+    },
+    coordinates: [Number],
+  },
+  birthDay: Date
 });
-let User = mongoose.model('User',userSchema);
+
+userSchema.index({"position": '2dsphere'});
+userSchema.index({firstName: 'text', lastName: 'text'});
+
+let User = mongoose.model('User', userSchema);
 module.exports = User;

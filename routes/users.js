@@ -1,3 +1,4 @@
+const userController = require('../controller/user.controller');
 var express = require('express');
 var router = express.Router();
 
@@ -20,9 +21,7 @@ router.get('/:id', function(req, res, next) {
  * POST
  */
 /* POST - Create new user */
-router.post('/', function(req, res, next) {
-    res.json({message:"Adding a new user"}, 201);
-});
+router.post('/', userController.createUser);
 
 /**
  * PUT
