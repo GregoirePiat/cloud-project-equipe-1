@@ -2,6 +2,7 @@ import test from 'ava';
 import express from 'express';
 let users = require('../routes/users');
 
+
 let initialData = require('./users.initialData');
 let initialDataId = [];
 
@@ -11,6 +12,11 @@ var bodyParser = require('body-parser');
 
 // Create a app's new instance to avoid problems - used in every other test
 function makeApp() {
+
+    let mongoose = require('mongoose');
+    mongoose.connect('mongodb://138.68.106.65:27017/test'); //Test database
+    mongoose.Promise = global.Promise;
+
     var app = express();
     app.use(bodyParser.json());
     app.use('/user', users);
