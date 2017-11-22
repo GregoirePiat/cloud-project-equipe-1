@@ -21,18 +21,15 @@ function makeApp() {
 test.before(async t => {
     for (var i=0; i < initialData.length; i++) {
         const res = await request(makeApp())
-            .post('/')
+            .post('/user/')
             .send(initialData[i]);
-
-        t.is(res.text, i);
-        initialDataId[i] = res.text;
     }
     t.pass();
 });
 
 test('getAllUsers', async t => {
     const res = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     t.is(res.status, 200);
     t.is(res.text, JSON.stringify(initialData));
@@ -44,13 +41,13 @@ test('getUserByID', async t => {
     console.log(initialDataId[midTabIndex]);
 
     const resById = await request(makeApp())
-        .get('/' + initialDataId);
+        .get('/user/' + initialDataId);
 
     t.is(resById.status, 200);
 
     //get all users to get id of added user
     const resAll = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     var addedUser = null;
     for (var i = 0; i < resAll.text.length; i++) {
@@ -68,13 +65,13 @@ test('getUserByID', async t => {
 test('createUser', async t => {
     // add first user from initial data
     const resAdd = await request(makeApp())
-        .post('/')
+        .post('/user/')
         .send(JSON.stringify(initialData[0]));
     t.is(resAdd.status, 201);
     // user was added correctly ?
     //get all users to get id of added user
     const resAll = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     var addedUser = null;
     for (var i = 0; i < resAll.text.length; i++) {
@@ -87,14 +84,12 @@ test('createUser', async t => {
 
     //get added user by id
     const resById = await request(makeApp())
-        .get('/' + addedUser.id);
+        .get('/user/' + addedUser.id);
 
     t.is(resById.text, JSON.stringify(addedUser));
 });
 
 test('updateAllUser', async t => {
-    t.pass(3);
-
     // update some users
     let usersUpdated = initialData;
     usersUpdated[0].lastName = "Nvos";
@@ -106,14 +101,14 @@ test('updateAllUser', async t => {
     usersUpdated[1].position[0] = "Faery realm";
 
     const resUpdate = await request(makeApp())
-        .put('/')
+        .put('/user/')
         .send(JSON.stringify(usersUpdated));
 
     t.is(resUpdate.status, 201);
 
     // get all users anew
     const resAllUsers = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     // test if old users were updated
     t.is(resAllUsers.text[0].lastName, "Nvos");
@@ -128,12 +123,12 @@ test('updateAllUser', async t => {
 test('updateUserByID', async t => {
     // add first user from initial data
     const resAdd = await request(makeApp())
-        .post('/')
+        .post('/user/')
         .send(JSON.stringify(initialData[0]));
 
     // select all users to get json of addedUser
     const resAll = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     var addedUser = null;
     for (var i = 0; i < resAll.text.length; i++) {
@@ -151,13 +146,13 @@ test('updateUserByID', async t => {
     newUser.position[0] = "Abyssal Plane";
 
     const resUpdate = await request(makeApp())
-        .put('/' + addedUser.id)
+        .put('/user/' + addedUser.id)
         .send(JSON.stringify(newUser));
     t.is(resUpdate.status, 201);
 
     // select added user - has he been correctly updated ?
     const resById = await request(makeApp())
-        .get('/' + newUser.id);
+        .get('/user/' + newUser.id);
     t.is(resById.status, 200);
     t.is(resById.text.lastName, "Nvos");
     t.is(resById.text.firstName, "Strelytsia");
@@ -169,18 +164,18 @@ test('updateUserByID', async t => {
 test('deleteAllUser', async t => {
     // select all users and count how many there are
     const resAllBefore = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     let nbUsers = resAllBefore.text.length;
 
     // delete all users
     const resDel = await request(makeApp())
-        .delete('/');
+        .delete('/user/');
     t.is(resDel.status, 200);
 
     // is everything effectively deleted ?
     const resAllAfter = await request(makeApp())
-        .get('/');
+        .get('/user/');
     t.is(resAllAfter.status, 200);
     t.is(resAllAfter.text, JSON.stringify('{}')); // should be empty
 });
@@ -188,17 +183,17 @@ test('deleteAllUser', async t => {
 test('deleteUserByID', async t => {
     // select all users
     const resAllBefore = await request(makeApp())
-        .get('/');
+        .get('/user/');
 
     // delete the first user
     let userToDel = resAllBefore.text[0];
 
     const resDel = await request(makeApp())
-        .delete('/' + userToDel.id);
+        .delete('/user/' + userToDel.id);
     t.is(resDel.status, 204);
 
     // is he effectively deleted ?
     const resById = await request(makeApp())
-        .get('/' + userToDel.id);
+        .get('/user/' + userToDel.id);
     t.is(resById.status, 500);
 });
