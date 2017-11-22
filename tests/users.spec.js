@@ -10,31 +10,37 @@ var request = require('supertest');
 var bodyParser = require('body-parser');
 
 
-// Create a app's new instance to avoid problems - used in every other test
-function makeApp() {
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://138.68.106.65:27017/test'); //Test database
+mongoose.Promise = global.Promise;
 
-    let mongoose = require('mongoose');
-    mongoose.connect('mongodb://138.68.106.65:27017/test'); //Test database
-    mongoose.Promise = global.Promise;
+const app = express();
+app.use(bodyParser.json());
+app.use('/user', users);
 
-    var app = express();
-    app.use(bodyParser.json());
-    app.use('/user', users);
-    return app;
+const dataBaseWith5Users = async () => {
+  const deleteAll = await request(app).delete('/user/');
+  const put5Users = await request(app).put('/user/').send(initialData);
+  return put5Users;
 }
 
 // This test runs before all tests - add 5 users to use for later tests
 test.before(async t => {
     for (var i=0; i < initialData.length; i++) {
-        const res = await request(makeApp())
+        const res = await request(app)
             .post('/user/')
             .send(initialData[i]);
     }
     t.pass();
 });
 
+
+test('true', t => {
+    t.pass();
+});
+
 test('getAllUsers', async t => {
-    const res = await request(makeApp())
+    const res = await request(app)
         .get('/user/');
 
     t.is(res.status, 200);
@@ -46,13 +52,13 @@ test('getUserByID', async t => {
     console.log(initialData[midTabIndex]);
     console.log(initialDataId[midTabIndex]);
 
-    const resById = await request(makeApp())
+    const resById = await request(app)
         .get('/user/' + initialDataId);
 
     t.is(resById.status, 200);
 
     //get all users to get id of added user
-    const resAll = await request(makeApp())
+    const resAll = await request(app)
         .get('/user/');
 
     var addedUser = null;
@@ -70,13 +76,13 @@ test('getUserByID', async t => {
 
 test('createUser', async t => {
     // add first user from initial data
-    const resAdd = await request(makeApp())
+    const resAdd = await request(app)
         .post('/user/')
         .send(JSON.stringify(initialData[0]));
     t.is(resAdd.status, 201);
     // user was added correctly ?
     //get all users to get id of added user
-    const resAll = await request(makeApp())
+    const resAll = await request(app)
         .get('/user/');
 
     var addedUser = null;
@@ -89,7 +95,7 @@ test('createUser', async t => {
     }
 
     //get added user by id
-    const resById = await request(makeApp())
+    const resById = await request(app)
         .get('/user/' + addedUser.id);
 
     t.is(resById.text, JSON.stringify(addedUser));
@@ -106,14 +112,14 @@ test('updateAllUser', async t => {
     usersUpdated[1].firstName = "Agory";
     usersUpdated[1].position[0] = "Faery realm";
 
-    const resUpdate = await request(makeApp())
+    const resUpdate = await request(app)
         .put('/user/')
         .send(JSON.stringify(usersUpdated));
 
     t.is(resUpdate.status, 201);
 
     // get all users anew
-    const resAllUsers = await request(makeApp())
+    const resAllUsers = await request(app)
         .get('/user/');
 
     // test if old users were updated
@@ -128,12 +134,12 @@ test('updateAllUser', async t => {
 
 test('updateUserByID', async t => {
     // add first user from initial data
-    const resAdd = await request(makeApp())
+    const resAdd = await request(app)
         .post('/user/')
         .send(JSON.stringify(initialData[0]));
 
     // select all users to get json of addedUser
-    const resAll = await request(makeApp())
+    const resAll = await request(app)
         .get('/user/');
 
     var addedUser = null;
@@ -151,13 +157,13 @@ test('updateUserByID', async t => {
     newUser.firstName = "Strelytsia";
     newUser.position[0] = "Abyssal Plane";
 
-    const resUpdate = await request(makeApp())
+    const resUpdate = await request(app)
         .put('/user/' + addedUser.id)
         .send(JSON.stringify(newUser));
     t.is(resUpdate.status, 201);
 
     // select added user - has he been correctly updated ?
-    const resById = await request(makeApp())
+    const resById = await request(app)
         .get('/user/' + newUser.id);
     t.is(resById.status, 200);
     t.is(resById.text.lastName, "Nvos");
@@ -167,39 +173,30 @@ test('updateUserByID', async t => {
     t.is(resById.text.birthday, JSON.stringify(newUser.birthday));
 });
 
-test('deleteAllUser', async t => {
-    // select all users and count how many there are
-    const resAllBefore = await request(makeApp())
-        .get('/user/');
-
-    let nbUsers = resAllBefore.text.length;
+test('deleteAllUser should return 204 No Content', async t => {
+    const resetedDatabase = await dataBaseWith5Users()
 
     // delete all users
-    const resDel = await request(makeApp())
+    const resDel = await request(app)
         .delete('/user/');
-    t.is(resDel.status, 200);
-
-    // is everything effectively deleted ?
-    const resAllAfter = await request(makeApp())
-        .get('/user/');
-    t.is(resAllAfter.status, 200);
-    t.is(resAllAfter.text, JSON.stringify('{}')); // should be empty
+    t.is(resDel.status, 204);
 });
 
-test('deleteUserByID', async t => {
-    // select all users
-    const resAllBefore = await request(makeApp())
-        .get('/user/');
 
-    // delete the first user
-    let userToDel = resAllBefore.text[0];
+test('deleteUserByID should return 204 No content on delete success', async t => {
+    const resetedDatabase = await dataBaseWith5Users()
+    const userToDelete = resetedDatabase.text[0];
 
-    const resDel = await request(makeApp())
+    const resDel = await request(app)
         .delete('/user/' + userToDel.id);
     t.is(resDel.status, 204);
+});
 
-    // is he effectively deleted ?
-    const resById = await request(makeApp())
-        .get('/user/' + userToDel.id);
-    t.is(resById.status, 500);
+test('deleteUserByID should return 204 No content on delete success', async t => {
+    const resetedDatabase = await dataBaseWith5Users()
+    const userToDelete = resetedDatabase.text[0];
+
+    const resDel = await request(app)
+        .delete('/user/toto');
+    t.is(resDel.status, 500);
 });
