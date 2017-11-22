@@ -3,7 +3,9 @@ import express from 'express';
 let users = require('../routes/users');
 
 
-let initialData = require('./users.initialData');
+let fiveUsers = require('./data/users.fiveUsers');
+let thousandUsers = require('./data/users.thousandUsers');
+
 let initialDataId = [];
 
 var request = require('supertest');
@@ -20,20 +22,9 @@ app.use('/user', users);
 
 const dataBaseWith5Users = async () => {
   const deleteAll = await request(app).delete('/user/');
-  const put5Users = await request(app).put('/user/').send(initialData);
+  const put5Users = await request(app).put('/user/').send(fiveUsers);
   return put5Users;
-}
-
-// This test runs before all tests - add 5 users to use for later tests
-test.before(async t => {
-    for (var i=0; i < initialData.length; i++) {
-        const res = await request(app)
-            .post('/user/')
-            .send(initialData[i]);
-    }
-    t.pass();
-});
-
+};
 
 test('true', t => {
     t.pass();
@@ -44,12 +35,12 @@ test('getAllUsers', async t => {
         .get('/user/');
 
     t.is(res.status, 200);
-    t.is(res.text, JSON.stringify(initialData));
+    t.is(res.text, JSON.stringify(fiveUsers));
 });
 
 test('getUserByID', async t => {
-    var midTabIndex = Math.floor(initialData.length / 2);
-    console.log(initialData[midTabIndex]);
+    var midTabIndex = Math.floor(fiveUsers.length / 2);
+    console.log(fiveUsers[midTabIndex]);
     console.log(initialDataId[midTabIndex]);
 
     const resById = await request(app)
@@ -63,9 +54,9 @@ test('getUserByID', async t => {
 
     var addedUser = null;
     for (var i = 0; i < resAll.text.length; i++) {
-        if (resAll.text[i].firstName == initialData[midTabIndex].firstName &&
-            resAll.text[i].lastName == initialData[midTabIndex].lastName &&
-            resAll.text[i].position == initialData[midTabIndex].position) {
+        if (resAll.text[i].firstName == fiveUsers[midTabIndex].firstName &&
+            resAll.text[i].lastName == fiveUsers[midTabIndex].lastName &&
+            resAll.text[i].position == fiveUsers[midTabIndex].position) {
             addedUser = resAll.text[i];
         }
     }
@@ -78,7 +69,7 @@ test('createUser', async t => {
     // add first user from initial data
     const resAdd = await request(app)
         .post('/user/')
-        .send(JSON.stringify(initialData[0]));
+        .send(JSON.stringify(fiveUsers[0]));
     t.is(resAdd.status, 201);
     // user was added correctly ?
     //get all users to get id of added user
@@ -87,9 +78,9 @@ test('createUser', async t => {
 
     var addedUser = null;
     for (var i = 0; i < resAll.text.length; i++) {
-        if (resAll.text[i].firstName == initialData[0].firstName &&
-            resAll.text[i].lastName == initialData[0].lastName &&
-            resAll.text[i].position == initialData[0].position) {
+        if (resAll.text[i].firstName == fiveUsers[0].firstName &&
+            resAll.text[i].lastName == fiveUsers[0].lastName &&
+            resAll.text[i].position == fiveUsers[0].position) {
             addedUser = resAll.text[i];
         }
     }
@@ -103,7 +94,7 @@ test('createUser', async t => {
 
 test('updateAllUser', async t => {
     // update some users
-    let usersUpdated = initialData;
+    let usersUpdated = fiveUsers;
     usersUpdated[0].lastName = "Nvos";
     usersUpdated[0].firstName = "Strelytsia";
     usersUpdated[0].position[0] = "Abyssal Plane";
@@ -136,7 +127,7 @@ test('updateUserByID', async t => {
     // add first user from initial data
     const resAdd = await request(app)
         .post('/user/')
-        .send(JSON.stringify(initialData[0]));
+        .send(JSON.stringify(fiveUsers[0]));
 
     // select all users to get json of addedUser
     const resAll = await request(app)
@@ -144,9 +135,9 @@ test('updateUserByID', async t => {
 
     var addedUser = null;
     for (var i = 0; i < resAll.text.length; i++) {
-        if (resAll.text[i].firstName == initialData[0].firstName &&
-            resAll.text[i].lastName == initialData[0].lastName &&
-            resAll.text[i].position == initialData[0].position) {
+        if (resAll.text[i].firstName == fiveUsers[0].firstName &&
+            resAll.text[i].lastName == fiveUsers[0].lastName &&
+            resAll.text[i].position == fiveUsers[0].position) {
             addedUser = resAll.text[i];
         }
     }
@@ -181,7 +172,6 @@ test('deleteAllUser should return 204 No Content', async t => {
         .delete('/user/');
     t.is(resDel.status, 204);
 });
-
 
 test('deleteUserByID should return 204 No content on delete success', async t => {
     const resetedDatabase = await dataBaseWith5Users()
