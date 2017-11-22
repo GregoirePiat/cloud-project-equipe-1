@@ -1,4 +1,26 @@
+sudo: required
+
+env:
+  - DOCKER_COMPOSE_VERSION=1.14.0
+
+services:
+  - docker
+  - web
+
 language: node_js
+
 node_js:
-  - "iojs"
   - "8"
+
+
+script:
+  - npm test
+  - docker build . --tag agory/cloud
+
+after_success:
+  #- if [ "$TRAVIS_BRANCH" == "FT/Compose" ]; then
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+  - docker push agory/cloud;
+   #fi
+
+
