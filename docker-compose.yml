@@ -7,7 +7,7 @@ services:
     environment:
       - DATABASE_URL=totov
     ports:
-      - "3000:3000"
+      - "80:3000"
     volumes:
       - ./:/usr/src/app
 
