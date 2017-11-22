@@ -2,15 +2,11 @@ import test from 'ava';
 import express from 'express';
 let users = require('../routes/users');
 
-
 let fiveUsers = require('./data/users.fiveUsers');
 let thousandUsers = require('./data/users.thousandUsers');
 
-let initialDataId = [];
-
 var request = require('supertest');
 var bodyParser = require('body-parser');
-
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://138.68.106.65:27017/test'); //Test database
@@ -23,170 +19,73 @@ app.use('/user', users);
 const dataBaseWith5Users = async () => {
   const deleteAll = await request(app).delete('/user/');
   const put5Users = await request(app).put('/user/').send(fiveUsers);
-  return put5Users;
+
+  return put5Users.body;
 };
 
-test('true', t => {
-    t.pass();
-});
-
-test('getAllUsers', async t => {
-    const res = await request(app)
-        .get('/user/');
-
+test('getAllUsers - Status code should be 200', async t => {
+    const resetedDatabase = await dataBaseWith5Users();
+    const res = await request(app).get('/user/');
     t.is(res.status, 200);
-    t.is(res.text, JSON.stringify(fiveUsers));
 });
 
-test('getUserByID', async t => {
-    var midTabIndex = Math.floor(fiveUsers.length / 2);
-    console.log(fiveUsers[midTabIndex]);
-    console.log(initialDataId[midTabIndex]);
-
-    const resById = await request(app)
-        .get('/user/' + initialDataId);
-
-    t.is(resById.status, 200);
-
-    //get all users to get id of added user
-    const resAll = await request(app)
-        .get('/user/');
-
-    var addedUser = null;
-    for (var i = 0; i < resAll.text.length; i++) {
-        if (resAll.text[i].firstName == fiveUsers[midTabIndex].firstName &&
-            resAll.text[i].lastName == fiveUsers[midTabIndex].lastName &&
-            resAll.text[i].position == fiveUsers[midTabIndex].position) {
-            addedUser = resAll.text[i];
-        }
-    }
-
-    // check getById result
-    t.is(resById.text, JSON.stringify(addedUser));
+test('getUserByID - Status code should be 200', async t => {
+    const resetedDatabase = await dataBaseWith5Users();
+    const res = await request(app).get('/user/' + resetedDatabase[0].id);
+    t.is(res.status, 200);
 });
 
-test('createUser', async t => {
-    // add first user from initial data
-    const resAdd = await request(app)
-        .post('/user/')
-        .send(JSON.stringify(fiveUsers[0]));
-    t.is(resAdd.status, 201);
-    // user was added correctly ?
-    //get all users to get id of added user
-    const resAll = await request(app)
-        .get('/user/');
-
-    var addedUser = null;
-    for (var i = 0; i < resAll.text.length; i++) {
-        if (resAll.text[i].firstName == fiveUsers[0].firstName &&
-            resAll.text[i].lastName == fiveUsers[0].lastName &&
-            resAll.text[i].position == fiveUsers[0].position) {
-            addedUser = resAll.text[i];
-        }
-    }
-
-    //get added user by id
-    const resById = await request(app)
-        .get('/user/' + addedUser.id);
-
-    t.is(resById.text, JSON.stringify(addedUser));
+test('createUser - Status code should be 200', async t => {
+    const resetedDatabase = await dataBaseWith5Users();
+    const resAdd = await request(app).post('/user/').send(thousandUsers[80]);
+    t.is(resAdd.status, 200);
 });
 
-test('updateAllUser', async t => {
+test('updateAllUser - Status code should be 201', async t => {
+    const usersUpdated = await dataBaseWith5Users();
+
     // update some users
-    let usersUpdated = fiveUsers;
     usersUpdated[0].lastName = "Nvos";
     usersUpdated[0].firstName = "Strelytsia";
-    usersUpdated[0].position[0] = "Abyssal Plane";
 
     usersUpdated[1].lastName = "yolob";
     usersUpdated[1].firstName = "Agory";
-    usersUpdated[1].position[0] = "Faery realm";
 
-    const resUpdate = await request(app)
-        .put('/user/')
-        .send(JSON.stringify(usersUpdated));
+    const resUpdate = await request(app).put('/user/').send(usersUpdated);
 
     t.is(resUpdate.status, 201);
-
-    // get all users anew
-    const resAllUsers = await request(app)
-        .get('/user/');
-
-    // test if old users were updated
-    t.is(resAllUsers.text[0].lastName, "Nvos");
-    t.is(resAllUsers.text[0].firstName, "Strelytsia");
-    t.is(resAllUsers.text[0].position[0], "Abyssal Plane");
-
-    t.is(resAllUsers.text[0].lastName, "yolob");
-    t.is(resAllUsers.text[1].firstName, "Agory");
-    t.is(resAllUsers.text[1].position[0], "Faery realm");
 });
 
-test('updateUserByID', async t => {
-    // add first user from initial data
-    const resAdd = await request(app)
-        .post('/user/')
-        .send(JSON.stringify(fiveUsers[0]));
+test('updateUserByID - Status code should be 200', async t => {
+    const resetedDatabase = await dataBaseWith5Users();
+    let userToUpdate = resetedDatabase[0];
 
-    // select all users to get json of addedUser
-    const resAll = await request(app)
-        .get('/user/');
+    // update 1 user
+    userToUpdate.lastName = "Nvos";
+    userToUpdate.firstName = "Strelytsia";
 
-    var addedUser = null;
-    for (var i = 0; i < resAll.text.length; i++) {
-        if (resAll.text[i].firstName == fiveUsers[0].firstName &&
-            resAll.text[i].lastName == fiveUsers[0].lastName &&
-            resAll.text[i].position == fiveUsers[0].position) {
-            addedUser = resAll.text[i];
-        }
-    }
-
-    // update added user
-    let newUser = addedUser;
-    newUser.lastName = "Nvos";
-    newUser.firstName = "Strelytsia";
-    newUser.position[0] = "Abyssal Plane";
-
-    const resUpdate = await request(app)
-        .put('/user/' + addedUser.id)
-        .send(JSON.stringify(newUser));
-    t.is(resUpdate.status, 201);
-
-    // select added user - has he been correctly updated ?
-    const resById = await request(app)
-        .get('/user/' + newUser.id);
-    t.is(resById.status, 200);
-    t.is(resById.text.lastName, "Nvos");
-    t.is(resById.text.firstName, "Strelytsia");
-    t.is(resById.text.position[0], "Abyssal Plane");
-    t.is(resById.text.position[1], JSON.stringify(newUser.position[1]));
-    t.is(resById.text.birthday, JSON.stringify(newUser.birthday));
+    const resultUpdate = await request(app).put('/user/' + userToUpdate.id).send(userToUpdate);
+    t.is(resultUpdate.status, 200);
 });
 
 test('deleteAllUser should return 204 No Content', async t => {
     const resetedDatabase = await dataBaseWith5Users()
 
-    // delete all users
     const resDel = await request(app)
         .delete('/user/');
     t.is(resDel.status, 204);
 });
 
 test('deleteUserByID should return 204 No content on delete success', async t => {
-    const resetedDatabase = await dataBaseWith5Users()
-    const userToDelete = resetedDatabase.text[0];
-
-    const resDel = await request(app)
-        .delete('/user/' + userToDel.id);
-    t.is(resDel.status, 204);
+    const resetedDatabase = await dataBaseWith5Users();
+    const userToDelete = resetedDatabase[0];
+    const resultDel = await request(app).delete('/user/' + userToDelete.id);
+    t.is(resultDel.status, 204);
 });
 
-test('deleteUserByID should return 204 No content on delete success', async t => {
-    const resetedDatabase = await dataBaseWith5Users()
-    const userToDelete = resetedDatabase.text[0];
+test('deleteUserByID should return 500 if user doesn\'t exists', async t => {
+    const resetedDatabase = await dataBaseWith5Users();
 
-    const resDel = await request(app)
-        .delete('/user/toto');
-    t.is(resDel.status, 500);
+    const resultDel = await request(app).delete('/user/toto');
+    t.is(resultDel.status, 500);
 });
