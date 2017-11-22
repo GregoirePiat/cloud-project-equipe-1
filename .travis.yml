@@ -19,9 +19,9 @@ script:
   - docker build . --tag agory/cloud
 
 after_success:
-  #- if [ "$TRAVIS_BRANCH" == "FT/Compose" ]; then
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-  - docker push agory/cloud;
-   #fi
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+  docker push agory/cloud;
+  fi
 
 
