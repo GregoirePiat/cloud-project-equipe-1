@@ -2,8 +2,8 @@
  * init mongoose
  */
 let mongoose = require('mongoose');
-// mongoose.connect('mongodb://138.68.106.65'); //To change
-mongoose.connect('localhost:27017'); //To change
+mongoose.connect('mongodb://138.68.106.65:27017'); //To change
+//mongoose.connect('localhost:27017'); //To change
 //Test connexion
 mongoose.Promise = global.Promise;
 let db = mongoose.connection;
