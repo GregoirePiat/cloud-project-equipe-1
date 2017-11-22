@@ -6,6 +6,7 @@ env:
 services:
   - docker
   - web
+  - mongodb
 
 language: node_js
 
