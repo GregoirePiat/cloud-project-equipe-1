@@ -164,6 +164,9 @@ let UserController = {
         let page = req.query.page || 0;
         let isGt = req.query.gt; // Choose available param
         let ageThreshold = req.query.gt || req.query.eq; // Choose available param
+        if(req.query.gt < 0 || req.query.gt < 0)
+            return res.status(400).json({message:"the age must be positive"});
+
         /**
          * Default date from age
          */
