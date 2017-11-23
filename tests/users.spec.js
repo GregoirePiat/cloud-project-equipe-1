@@ -23,9 +23,22 @@ const dataBaseWith5Users = async () => {
   return put5Users.body;
 };
 
+const dataBaseWith1000Users = async () => {
+  const deleteAll = await request(app).delete('/user/');
+  const put5Users = await request(app).put('/user/').send(thousandUsers);
+
+  return put5Users.body;
+};
+
 test('getAllUsers - Status code should be 200', async t => {
     const resetedDatabase = await dataBaseWith5Users();
     const res = await request(app).get('/user/');
+    t.is(res.status, 200);
+});
+
+test('getAllUsers pagination - Status code should be 200', async t => {
+    const resetedDatabase = await dataBaseWith1000Users();
+    const res = await request(app).get('/user?page=5');
     t.is(res.status, 200);
 });
 
