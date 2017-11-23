@@ -33,12 +33,13 @@ let UserController = {
 
     /* GET all user  */
     getAllUser: function(req, res, next) {
-        User.find({}, (err, users) => {
-            if (err) {
-                return res.status(500).json(err.message);
-            }
-            res.json(users.map(user => dao2dto(user)));
-        });
+      let page = req.query.page | 0;
+      User.find({}, (err, users) => {
+        if (err) {
+          return res.status(500).json(err.message);
+        }
+        res.json(users.map(user => dao2dto(user)));
+      }).skip(100*page).limit(100);
     },
 
     /* GET one user by id. */
