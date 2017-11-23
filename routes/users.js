@@ -3,6 +3,14 @@ var express = require('express');
 var router = express.Router();
 let UserController = require('../controller/user.controller');
 
+/**
+ * Search User
+ */
+router.get('/age', UserController.searchUserByAge);
+
+router.get('/nearest', UserController.searchNearUser);
+
+router.get('/search', UserController.searchUserByName);
 
 /**
  * GET
@@ -43,5 +51,7 @@ router.delete('/:id', UserController.deleteUserByID);
  */
 /* DELETE - Delete one user by id */
 router.put('/add', UserController.addUser);
+
+
 
 module.exports = router;

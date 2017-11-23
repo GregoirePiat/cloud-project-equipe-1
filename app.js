@@ -2,7 +2,7 @@
  * init mongoose
  */
 let mongoose = require('mongoose');
-mongoose.connect('mongodb://mongo:27017/prod'); //To change
+mongoose.connect('mongodb://localhost:27017/prod',{ useMongoClient: true }); //To change
 //mongoose.connect('localhost:27017'); //To change
 //Test connexion
 mongoose.Promise = global.Promise;
@@ -24,7 +24,7 @@ let user = require('./routes/users');
 let app = express();
 
 app.use(logger('dev'));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '100mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 

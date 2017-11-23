@@ -29,6 +29,7 @@
     "files": [
       "tests/*.spec.js"
     ],
+    "concurrency": 1,
     "tap": true
   }
 }

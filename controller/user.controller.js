@@ -2,7 +2,6 @@ const moment = require('moment');
 let User = require('../model/user');
 
 const dto2dao = user => {
-
     return new User({
         _id: user.id,
         firstName: user.firstName,
@@ -10,7 +9,7 @@ const dto2dao = user => {
         birthDay: moment(user.birthDay, 'MM/DD/YYYY'),
         position: {
             type: 'Point',
-            coordinates: [user.position.lon, user.position.lat]
+            coordinates: [(user.position) ? user.position.lon : 0, (user.position) ? user.position.lat : 0]
         }
     });
 };
@@ -32,36 +31,35 @@ const dao2dto = user => {
 let UserController = {
 
     /* GET all user  */
-    getAllUser: function(req, res, next) {
-      let page = req.query.page | 0;
-      User.find({}, (err, users) => {
-        if (err) {
-          return res.status(500).json(err.message);
-        }
-        res.json(users.map(user => dao2dto(user)));
-      }).skip(100*page).limit(100);
+    getAllUser: function (req, res, next) {
+        let page = req.query.page || 0;
+        User.find({}, (err, users) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
+            res.json(users.map(user => dao2dto(user)));
+        }).skip(100 * page).limit(100);
     },
 
     /* GET one user by id. */
-    getUserByID: function(req, res, next) {
-        let userId = req.params.id;
-        console.log(userId);
-        User.findOne({'_id': userId}, (err, user) => {
+    getUserByID: function (req, res, next) {
+        if (!req.params.id)
+            return res.status(404).json({error: 'no user with such id'});
+
+        User.findOne({'_id': req.params.id}, (err, user) => {
             if (err) {
-                console.log(err);
-                return res.status(500).json(err.message);
+                return res.status(404).json(err.message);
             }
             if (user) {
                 res.json(dao2dto(user));
             } else {
-                res.status(404);
-                res.json({error: 'no user with such id'})
+                res.status(404).json({error: 'no user with such id'})
             }
         });
     },
 
     /* POST - Create new user */
-    createUser: function(req, res, next) {
+    createUser: function (req, res, next) {
         const user = dto2dao(req.body);
         user.save((err, user) => {
             if (err) {
@@ -73,7 +71,7 @@ let UserController = {
 
 
     /* PUT - Update all user */
-    updateAllUser: function(req, res, next) {
+    updateAllUser: function (req, res, next) {
         let users = req.body.map(user => dto2dao(user));
         User.remove({}, (err) => {
             if (err) {
@@ -87,6 +85,7 @@ let UserController = {
                     if (err) {
                         return res.status(500).json(err.message);
                     }
+                    res.status(201);
                     res.json(usersUpdated.map(user => dao2dto(user)));
                 });
             });
@@ -95,31 +94,33 @@ let UserController = {
 
 
     /* PUT - Update one user by id */
-    updateUserByID: function(req, res, next) {
-        console.log(req.params);
-        let user = dto2dao(req.body);
+    updateUserByID: function (req, res, next) {
         let userId = req.params.id;
-        User.findByIdAndUpdate({_id: user._id}, {$set: user}, function(err, updatedUser) {
+        let user = dto2dao(req.body);
+        user._id = userId;
+        User.findByIdAndUpdate(userId, {$set: user}, (err, updatedUser) => {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            res.status(201);
-            res.send(dao2dto(updatedUser));
+            if (!updatedUser) {
+                return res.status(404).json();
+            }
+            res.status(200).send(dao2dto(updatedUser));
         });
     },
 
-    /* DELETE - Update all user */
-    deleteAllUser: function(req, res, next) {
+    /* DELETE - Delete all user */
+    deleteAllUser: function (req, res, next) {
         User.deleteMany({}, (err) => {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            res.status(204).json({message: 'All users deleted'});
+            res.status(200).json({});
         });
     },
 
     /* DELETE - Delete one user by id */
-    deleteUserByID: function(req, res, next) {
+    deleteUserByID: function (req, res, next) {
         let userId = req.params.id;
         User.remove({_id: userId}, (err) => {
             if (err) {
@@ -130,11 +131,75 @@ let UserController = {
     },
 
     //Add a user
-    addUser: function(req, res, next) {
+    addUser: function (req, res, next) {
         let user = new User({firstName: 'Polyetch'});
         user.save();
         res.json({message: 'Add polytech'});
-    }
+    },
+
+    searchNearUser: function (req, res, next) {
+        if (!req.query.lon || !req.query.lat) {
+            return res.status(500).json({message: 'latitude and longitude is needed'});
+        }
+        User.find()
+            .where('position')
+            .near({
+                center: {
+                    type: 'Point',
+                    coordinates: [req.query.lon, req.query.lat]
+                },
+            })
+            .limit(10)
+            .exec((err, users) => {
+                if (err) {
+                    return res.status(500).json(err.message);
+                }
+                res.json(users.map(user => dao2dto(user)));
+            });
+    },
+
+
+    /* GET one user by id. */
+    searchUserByAge: function (req, res, next) {
+        let page = req.query.page || 0;
+        let isGt = req.query.gt; // Choose available param
+        let ageThreshold = req.query.gt || req.query.eq; // Choose available param
+        /**
+         * Default date from age
+         */
+        let defaultDate = moment(Date.now()).subtract(ageThreshold, 'year').format('MM/DD/YYYY');
+        /**
+         * Compute begin and end date span
+         */
+        let beginDate = moment(defaultDate).subtract(6, 'months').format('MM/DD/YYYY');
+        let endDate = moment(defaultDate).add(6, 'months').format('MM/DD/YYYY');
+
+        let dateMin = moment(Date.now()).subtract(ageThreshold, 'year').format('MM/DD/YYYY');
+        let where = (isGt) ?
+            {birthDay: {$lt: dateMin}} :
+            {$and: [{birthDay: {$gt: beginDate}}, {birthDay: {$lt: endDate}}]};
+
+
+        User.find(where, (err, users) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
+            res.json(users.map(user => dao2dto(user)));
+        }).skip(100 * page).limit(100);
+    },
+
+    /* GET one user by id. */
+    searchUserByName: function (req, res, next) {
+        let page = req.query.page || 0;
+        let name = req.query.term;
+        User.find({lastName: new RegExp('^' + name + '$', "i")}, (err, users) => {
+            if (err) {
+                return res.status(500).json(err.message);
+            }
+            res.json(users.map(user => dao2dto(user)));
+        }).skip(100 * page).limit(100);
+
+    },
 };
 
 module.exports = UserController;
