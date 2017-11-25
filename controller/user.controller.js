@@ -35,14 +35,15 @@ let UserController = {
     getAllUser: function (req, res, next) {
         let page = req.query.page || 0;
         if(users = cache.get('user-page-'+page)){
-            return res.status(200).json(users.map(user => dao2dto(user)));
+            return res.status(200).json(users);
         }
         User.find({}, (err, users) => {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            cache.put('user-page-'+page, users,500);
-            res.status(200).json(users.map(user => dao2dto(user)));
+            users = users.map(user => dao2dto(user));
+            cache.put('user-page-'+page, users,1000);
+            res.status(200).json(users);
         }).skip(100 * page).limit(100);
     },
 
@@ -58,8 +59,9 @@ let UserController = {
                 return res.status(404).json(err.message);
             }
             if (user) {
-                cache.put('user-id-'+req.params.id, user,500);
-                res.json(dao2dto(user));
+                user = dao2dto(user);
+                cache.put('user-id-'+req.params.id, user,1000);
+                res.json(user);
             } else {
                 res.status(404).json({error: 'no user with such id'})
             }
