@@ -2,14 +2,14 @@
 
 host="polytech-info.fr"
 user="root"
-workdir="/home/cloud/test/"
+workdir="/home/cloud/test2/"
 
 ssh ${user}@${host} mkdir ${workdir} -p
 scp docker-compose.yml ${user}@${host}:${workdir}
 
 
-ssh ${user}@${host} cd ${workdir}
-ssh ${user}@${host} docker-compose pull
-ssh ${user}@${host} docker-compose up
+ssh ${user}@${host} "cd ${workdir}; docker-compose pull"
+ssh ${user}@${host} "cd ${workdir}; docker-compose down"
+ssh ${user}@${host} "cd ${workdir}; docker-compose up"
 
 exit

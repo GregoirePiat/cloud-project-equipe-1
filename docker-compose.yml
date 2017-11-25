@@ -1,15 +1,44 @@
-version: '3'
+version: '2.2'
 services:
   web:
     image: agory/cloud
     restart: always
     depends_on:
       - mongo
-    ports:
-      - "80:3000"
+    environment:
+      - VIRTUAL_PORT=3000
+      - VIRTUAL_HOST=polytech-info.fr
+      - LETSENCRYPT_HOST=polytech-info.fr
+      - LETSENCRYPT_EMAIL=agory.contact@gmail.fr
 
   mongo:
     image: mongo
     restart: always
+
+  nginx-proxy:
+    restart: always
+    image: jwilder/nginx-proxy
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx/certs:/etc/nginx/certs:ro
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    depends_on:
+      - web
+    volumes:
+      - ./config/nginx/certs:/etc/nginx/certs:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+    volumes_from:
+      - nginx-proxy
+
+
 
 
