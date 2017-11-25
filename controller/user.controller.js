@@ -42,7 +42,7 @@ let UserController = {
                 return res.status(500).json(err.message);
             }
             users = users.map(user => dao2dto(user));
-            cache.put('user-page-'+page, users,1000);
+            cache.put('user-page-'+page, users,4000);
             res.status(200).json(users);
         }).skip(100 * page).limit(100);
     },
@@ -60,7 +60,7 @@ let UserController = {
             }
             if (user) {
                 user = dao2dto(user);
-                cache.put('user-id-'+req.params.id, user,1000);
+                cache.put('user-id-'+req.params.id, user,4000);
                 res.json(user);
             } else {
                 res.status(404).json({error: 'no user with such id'})
