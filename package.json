@@ -10,13 +10,11 @@
     "ava-files": "^1.0.0",
     "body-parser": "~1.18.2",
     "chai": "^4.1.2",
-    "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "moment": "*",
     "mongoose": "^4.13.0",
     "morgan": "~1.9.0",
-    "serve-favicon": "~2.4.5",
     "tap": "^10.7.3",
     "tap-nyan": "^1.1.0",
     "twig": "~0.10.3"

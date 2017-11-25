@@ -12,10 +12,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {/* we're connected!*/console.log("we're connected") });
 
 let express = require('express');
-let path = require('path');
-let favicon = require('serve-favicon');
 let logger = require('morgan');
-let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
 
 let index = require('./routes/index');
@@ -26,7 +23,7 @@ let app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '100mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 
 app.use('/', index);
 app.use('/user', user);
