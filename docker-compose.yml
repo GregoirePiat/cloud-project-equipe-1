@@ -2,17 +2,14 @@ version: '3'
 services:
   web:
     image: agory/cloud
+    restart: always
     depends_on:
       - mongo
-    environment:
-      - DATABASE_URL=totov
     ports:
       - "80:3000"
-    volumes:
-      - ./:/usr/src/app
 
   mongo:
     image: mongo
-    ports:
-      - 27017:27017
+    restart: always
+
 
