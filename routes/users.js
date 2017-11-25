@@ -46,12 +46,6 @@ router.delete('/', UserController.deleteAllUser);
 /* DELETE - Delete one user by id */
 router.delete('/:id', UserController.deleteUserByID);
 
-/**
- * Add Polytech
- */
-/* DELETE - Delete one user by id */
-router.put('/add', UserController.addUser);
-
 
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const moment = require('moment');
 let User = require('../model/user');
+const cache = require('memory-cache');
 
 const dto2dao = user => {
     return new User({
@@ -33,11 +34,15 @@ let UserController = {
     /* GET all user  */
     getAllUser: function (req, res, next) {
         let page = req.query.page || 0;
+        if(users = cache.get('user-page-'+page)){
+            return res.status(200).json(users.map(user => dao2dto(user)));
+        }
         User.find({}, (err, users) => {
             if (err) {
                 return res.status(500).json(err.message);
             }
-            res.json(users.map(user => dao2dto(user)));
+            cache.put('user-page-'+page, users,500);
+            res.status(200).json(users.map(user => dao2dto(user)));
         }).skip(100 * page).limit(100);
     },
 
@@ -45,12 +50,15 @@ let UserController = {
     getUserByID: function (req, res, next) {
         if (!req.params.id)
             return res.status(404).json({error: 'no user with such id'});
-
+        if(users = cache.get('user-id-'+req.params.id)){
+            return res.status(200).json(users.map(user => dao2dto(user)));
+        }
         User.findOne({'_id': req.params.id}, (err, user) => {
             if (err) {
                 return res.status(404).json(err.message);
             }
             if (user) {
+                cache.put('user-id-'+req.params.id, user,500);
                 res.json(dao2dto(user));
             } else {
                 res.status(404).json({error: 'no user with such id'})
@@ -65,6 +73,7 @@ let UserController = {
             if (err) {
                 return res.status(500).json(err.message);
             }
+            cache.clear();
             res.status(201).json(dao2dto(user));
         });
     },
@@ -81,6 +90,7 @@ let UserController = {
                 if (err) {
                     return res.status(500).json(err.message);
                 }
+                cache.clear();
                 User.find({}, (err, usersUpdated) => {
                     if (err) {
                         return res.status(500).json(err.message);
@@ -105,6 +115,7 @@ let UserController = {
             if (!updatedUser) {
                 return res.status(404).json();
             }
+            cache.clear();
             res.status(200).send(dao2dto(updatedUser));
         });
     },
@@ -115,6 +126,7 @@ let UserController = {
             if (err) {
                 return res.status(500).json(err.message);
             }
+            cache.clear();
             res.status(200).json({});
         });
     },
@@ -126,16 +138,11 @@ let UserController = {
             if (err) {
                 return res.status(500).json(err.message);
             }
+            cache.clear();
             res.status(204).json({message: 'User deleted'});
         });
     },
 
-    //Add a user
-    addUser: function (req, res, next) {
-        let user = new User({firstName: 'Polyetch'});
-        user.save();
-        res.json({message: 'Add polytech'});
-    },
 
     searchNearUser: function (req, res, next) {
         if (!req.query.lon || !req.query.lat) {
