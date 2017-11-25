@@ -8,6 +8,7 @@ services:
     environment:
       - VIRTUAL_PORT=3000
       - VIRTUAL_HOST=polytech-info.fr
+      - HTTPS_METHOD=noredirect
       - LETSENCRYPT_HOST=polytech-info.fr
       - LETSENCRYPT_EMAIL=agory.contact@gmail.fr
 
