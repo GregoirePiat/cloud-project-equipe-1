@@ -1,44 +1,68 @@
+const express = require('express');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const index = require('./routes/index');
+const user = require('./routes/users');
+const mongoose = require('mongoose');
+
+/**
+ * init express app
+ */
+const app = express();
+const env = app.get('env').trim();
+
+/**
+ * Select config
+ */
+let config;
+console.log("Mode : " + env);
+if (env === "production"){
+    config = require('./config.prod');
+} else {
+    console.log("dev");
+    config = require('./config.dev');
+}
+
 /**
  * init mongoose
  */
-let mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/prod',{ useMongoClient: true }); //To change
+mongoose.connect(config.db, {useMongoClient: true}); //To change
 //mongoose.connect('localhost:27017'); //To change
 //Test connexion
 mongoose.Promise = global.Promise;
-let db = mongoose.connection;
+const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {/* we're connected!*/console.log("we're connected") });
+db.once('open', function () {/* we're connected!*/
+    console.log("we're connected")
+});
 
-let express = require('express');
-let logger = require('morgan');
-let bodyParser = require('body-parser');
 
-let index = require('./routes/index');
-let user = require('./routes/users');
 
-let app = express();
 
+
+/**
+ * set some middleware
+ */
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '100mb'}));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 
 app.use('/', index);
 app.use('/user', user);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  let err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    let err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.json(req.app.get('env') === 'development' ? err : err.message);
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.json(req.app.get('env') === 'development' ? err : err.message);
 });
 
 module.exports = app;
