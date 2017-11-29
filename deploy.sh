@@ -2,7 +2,7 @@
 
 host="polytech-info.fr"
 user="root"
-workdir="/home/cloud/test2/"
+workdir="/home/cloud/"
 
 ssh ${user}@${host} mkdir ${workdir} -p
 scp docker-compose.yml ${user}@${host}:${workdir}
